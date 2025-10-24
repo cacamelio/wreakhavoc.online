@@ -29,21 +29,21 @@ void CAntiAim::PickYaw( float& yaw ) {
 
 	const int& yawRange{ Config::Get<int>( Vars.AntiaimYawRange ) };
 
-	switch ( Config::Get<int>( Vars.AntiaimYaw ) ) {
-	case 0: yaw += 0.f; break;// forward
+	switch ( Config::Get<int>( Vars.AntiaimYaw ) )
+	{
+	case 0: yaw += 0.f; break;	// forward
 	case 1: yaw += 180.f; break;// backward
-	case 2: yaw += 90.f; break;// left
-	case 3: yaw -= 90.f; break;// right
+	case 2: yaw += 90.f; break;	// left
+	case 3: yaw -= 90.f; break;	// right
 	}
 
-	switch ( Config::Get<int>( Vars.AntiaimYawAdd ) ) {
+	switch ( Config::Get<int>( Vars.AntiaimYawAdd ) )
+	{
 	case 1:// jitter 
 		yaw += yawRange * ( ChokeCycleJitter ? 0.5f : -0.5f );
 		break;
-	case 2: {// rotate
-		//if ( Interfaces::ClientState->nChokedCommands )
-		//	break;
-
+	case 2: // rotate
+		{
 		rotatedYaw -= invert ? Config::Get<int>( Vars.AntiaimYawSpeed ) : -Config::Get<int>( Vars.AntiaimYawSpeed );
 
 		if ( rotatedYaw < yawRange * -0.5f )
@@ -55,28 +55,30 @@ void CAntiAim::PickYaw( float& yaw ) {
 		
 		yaw += rotatedYaw;
 	}break;
-	case 3: {// spin
+	case 3: // spin
+	{
 		rotatedYaw += Config::Get<int>( Vars.AntiaimYawSpeed );
 		rotatedYaw = std::remainderf( rotatedYaw, 360.f );
 		yaw = rotatedYaw;
 		break;
 	}
-	case 4: {// random
+	case 4: // random
+	{
 		yaw += Math::RandomFloat( -yawRange / 2.f, yawRange / 2.f );
 		break;
 	}
 	default: break;
 	}
 
-	if ( ctx.m_bSafeFromDefensive && Features::Exploits.m_bWasDefensiveTick ) {
+	if ( ctx.m_bSafeFromDefensive && Features::Exploits.m_bWasDefensiveTick )
+	{
 		const auto amount{ Config::Get<int>( Vars.AntiaimSafeYawRandomisation ) / 100.f };
 		yaw += Math::RandomFloat( -180 * amount, 180 * amount );
 	}
 }
 
 int CAntiAim::Freestanding( ) {
-	if ( !Config::Get<int>( Vars.AntiaimFreestanding )
-		|| !Config::Get<keybind_t>( Vars.AntiaimFreestandingKey ).enabled )
+	if ( !Config::Get<int>( Vars.AntiaimFreestanding ) || !Config::Get<keybind_t>( Vars.AntiaimFreestandingKey ).enabled )
 		return 0;
 
 	Vector forward, right;
@@ -105,12 +107,14 @@ int CAntiAim::Freestanding( ) {
 	);
 	const auto leftDist{ ( tr.vecEnd - tr.vecStart ).Length( ) };
 
-	if ( rightDist > leftDist + 20.f ) {
+	if ( rightDist > leftDist + 20.f )
+	{
 		if ( rightDist > middleDist + 20.f )
 			return 1;
 	}
 
-	if ( leftDist > rightDist + 20.f ) {
+	if ( leftDist > rightDist + 20.f ) 
+	{
 		if ( leftDist > middleDist + 20.f )
 			return 2;
 	}
@@ -120,12 +124,12 @@ int CAntiAim::Freestanding( ) {
 
 float CAntiAim::BaseYaw( CUserCmd& cmd ) {
 	m_bAntiBackstab = false;
-	//if ( !Interfaces::ClientState->nChokedCommands )
 	ChokeCycleJitter = !ChokeCycleJitter;
 
 	if ( Config::Get<bool>( Vars.AntiaimConstantInvert ) )
 		Invert = !Invert;
-	else {
+	else 
+	{
 		static auto old{ Config::Get<keybind_t>( Vars.AntiaimInvert ).enabled };
 		if ( old != Config::Get<keybind_t>( Vars.AntiaimInvert ).enabled )
 			Invert = old = Config::Get<keybind_t>( Vars.AntiaimInvert ).enabled;
@@ -135,7 +139,8 @@ float CAntiAim::BaseYaw( CUserCmd& cmd ) {
 
 	const auto side{ Freestanding( ) };
 
-	if ( Config::Get<bool>( Vars.AntiAimManualDir ) ) {
+	if ( Config::Get<bool>( Vars.AntiAimManualDir ) )
+	{
 		if ( ManualSide == 1 ) {
 			yaw += 90.f;
 			return yaw;
@@ -146,17 +151,21 @@ float CAntiAim::BaseYaw( CUserCmd& cmd ) {
 		}
 	}
 
-	if ( side && Config::Get<int>( Vars.AntiaimFreestanding ) == 1 ) {
-		if ( side == 1 ) {
+	if ( side && Config::Get<int>( Vars.AntiaimFreestanding ) == 1 )
+	{
+		if ( side == 1 )
+		{
 			yaw += 90.f;
 			return yaw;
 		}
-		else if ( side == 2 ) {
+		else if ( side == 2 )
+		{
 			yaw -= 90.f;
 			return yaw;
 		}
 	}
-	else if ( Config::Get<int>( Vars.AntiaimFreestanding ) == 2 || Config::Get<int>( Vars.AntiaimFreestanding ) == 3 ) {
+	else if ( Config::Get<int>( Vars.AntiaimFreestanding ) == 2 || Config::Get<int>( Vars.AntiaimFreestanding ) == 3 )
+	{
 		if ( side == 1 )
 			Invert = Config::Get<int>( Vars.AntiaimFreestanding ) == 2;
 		else if ( side == 2 )
@@ -165,7 +174,8 @@ float CAntiAim::BaseYaw( CUserCmd& cmd ) {
 
 	AtTarget( yaw );
 
-	if ( m_bFlickNow ) {
+	if ( m_bFlickNow )
+	{
 		if ( Config::Get<bool>( Vars.AntiaimConstantInvertFlick ) )
 			m_bInvertFlick = !m_bInvertFlick;
 		else
@@ -178,8 +188,6 @@ float CAntiAim::BaseYaw( CUserCmd& cmd ) {
 		return yaw;
 
 	PickYaw( yaw );
-	//AutoDirection( yaw );
-
 	return yaw;
 }
 
@@ -190,7 +198,8 @@ void CAntiAim::AtTarget( float& yaw ) {
 	if ( !Config::Get<int>( Vars.AntiaimAtTargets ) && !Config::Get<bool>( Vars.AntiaimAntiBackStab ) )
 		return;
 
-	for ( auto i = 1; i < 64; ++i ) {
+	for ( auto i = 1; i < 64; ++i ) 
+	{
 		const auto player{ static_cast< CBasePlayer* >( Interfaces::ClientEntityList->GetClientEntity( i ) ) };
 		if ( !player
 			|| !player->IsPlayer( )
@@ -200,9 +209,12 @@ void CAntiAim::AtTarget( float& yaw ) {
 			continue;
 
 		const auto dist{ ( ctx.m_pLocal->m_vecOrigin( ) - player->m_vecOrigin( ) ).Length( ) };
-		if ( Config::Get<bool>( Vars.AntiaimAntiBackStab ) ) {
-			if ( player->GetWeapon( )->IsKnife( ) ) {
-				if ( dist < 250 ) {
+		if ( Config::Get<bool>( Vars.AntiaimAntiBackStab ) )
+		{
+			if ( player->GetWeapon( )->IsKnife( ) )
+			{
+				if ( dist < 250 )
+				{
 					bestPlayer = player;
 					m_bAntiBackstab = true;
 					break;
@@ -210,8 +222,10 @@ void CAntiAim::AtTarget( float& yaw ) {
 			}
 		}
 
-		switch ( Config::Get<int>( Vars.AntiaimAtTargets ) ) {
-		case 1: {// FOV/closest to crosshair
+		switch ( Config::Get<int>( Vars.AntiaimAtTargets ) )
+		{
+		case 1:  // FOV/closest to crosshair
+		{
 			const auto fov = Math::GetFov( ctx.m_angOriginalViewangles, Math::CalcAngle( ctx.m_vecEyePos, player->GetAbsOrigin( ) ) );
 			if ( fov > bestValue )
 				continue;
@@ -219,7 +233,8 @@ void CAntiAim::AtTarget( float& yaw ) {
 			bestValue = fov;
 			bestPlayer = player;
 		}break;
-		case 2: {// Distance
+		case 2: // Distance
+		{
 			if ( dist > bestValue )
 				continue;
 
@@ -262,12 +277,10 @@ bool CAntiAim::Condition( CUserCmd& cmd, bool checkCmd ) {
 		&& ( ctx.m_pWeapon->m_iItemDefinitionIndex( ) != WEAPON_REVOLVER || ctx.m_bRevolverCanShoot ) )
 		return true;
 
-	// e
 	if ( cmd.iButtons & IN_USE )
 		return true;
 
-	// right click
-	if ( cmd.iButtons & IN_ATTACK2 && ctx.m_pWeapon->IsKnife( ) /*&& ctx.can_shoot*/ )
+	if ( cmd.iButtons & IN_ATTACK2 && ctx.m_pWeapon->IsKnife( ) )
 		return true;
 
 	return false;
@@ -300,8 +313,7 @@ void CAntiAim::FakeLag( int cmdNum ) {
 
 	if ( Config::Get<bool>( Vars.AntiaimFakeLagInPeek ) ) {
 		
-		if ( cmdNum - ctx.m_iLastPeekCmdNum < 15
-			&& ctx.m_bInPeek ) {
+		if ( cmdNum - ctx.m_iLastPeekCmdNum < 15 && ctx.m_bInPeek ) {
 			ctx.m_bSendPacket = false;
 			//return;
 		}
@@ -312,8 +324,10 @@ void CAntiAim::FakeLag( int cmdNum ) {
 	if ( m_bFlickNow )
 		m_bFlickNow = false;
 
-	if ( Config::Get<bool>( Vars.AntiaimFlickHead ) && !ctx.m_bFakeDucking ) {
-		if ( ++m_iFlickTimer > Config::Get<int>( Vars.AntiaimFlickSpeed ) ) {
+	if ( Config::Get<bool>( Vars.AntiaimFlickHead ) && !ctx.m_bFakeDucking )
+	{
+		if ( ++m_iFlickTimer > Config::Get<int>( Vars.AntiaimFlickSpeed ) )
+		{
 			m_bFlickNow = ctx.m_bSendPacket = true;
 			m_iFlickTimer = 0;
 		}
@@ -324,19 +338,18 @@ void CAntiAim::RunLocalModifications( CUserCmd& cmd, int tickbase ) {
 
 	const auto animstate{ ctx.m_pLocal->m_pAnimState( ) };
 	const auto totalCmds{ Interfaces::ClientState->nChokedCommands + 1 };
-	if ( totalCmds < 1
-		|| !animstate )
+	if ( totalCmds < 1 || !animstate )
 		return;
 
 	auto yaw{ std::remainderf( BaseYaw( cmd ), 360.f ) };
 
-	if ( ctx.m_bSafeFromDefensive && Features::Exploits.m_bWasDefensiveTick ) {
+	if ( ctx.m_bSafeFromDefensive && Features::Exploits.m_bWasDefensiveTick )
+	{
 		const auto amount{ Config::Get<int>( Vars.AntiaimSafeYawRandomisation ) / 100.f };
 		yaw += Math::RandomFloat( -180 * amount, 180 * amount );
 	}
 
-	const auto inShot{ ctx.m_iLastShotNumber > Interfaces::ClientState->iLastOutgoingCommand
-		&& ctx.m_iLastShotNumber <= ( Interfaces::ClientState->iLastOutgoingCommand + Interfaces::ClientState->nChokedCommands + 1 ) };
+	const auto inShot{ ctx.m_iLastShotNumber > Interfaces::ClientState->iLastOutgoingCommand && ctx.m_iLastShotNumber <= ( Interfaces::ClientState->iLastOutgoingCommand + Interfaces::ClientState->nChokedCommands + 1 ) };
 
 	if ( animstate->bFirstUpdate )
 		ctx.m_cFakeData.init = false;
@@ -360,7 +373,8 @@ void CAntiAim::RunLocalModifications( CUserCmd& cmd, int tickbase ) {
 	else
 		yaw += Config::Get<int>( Vars.AntiaimNormalYawAdd );
 
-	for ( auto i{ 1 }; i <= totalCmds; ++i ) {
+	for ( auto i{ 1 }; i <= totalCmds; ++i )
+	{
 		const auto j{ ( Interfaces::ClientState->iLastOutgoingCommand + i ) % 150 };
 
 		auto& curUserCmd{ Interfaces::Input->pCommands[ j ] };
@@ -374,9 +388,10 @@ void CAntiAim::RunLocalModifications( CUserCmd& cmd, int tickbase ) {
 		if ( curUserCmd.iTickCount == INT_MAX )
 			continue;
 
-		if ( curLocalData.PredictedNetvars.m_MoveType != MOVETYPE_LADDER
-			&& curLocalData.m_MoveType != MOVETYPE_LADDER ) {
-			if ( curLocalData.m_bCanAA ) {
+		if ( curLocalData.PredictedNetvars.m_MoveType != MOVETYPE_LADDER && curLocalData.m_MoveType != MOVETYPE_LADDER )
+		{
+			if ( curLocalData.m_bCanAA )
+			{
 				const auto oldViewAngles{ curUserCmd.viewAngles };
 
 				curUserCmd.viewAngles.y = yaw;
@@ -395,8 +410,10 @@ void CAntiAim::RunLocalModifications( CUserCmd& cmd, int tickbase ) {
 			Features::Misc.NormalizeMovement( curUserCmd );
 		}
 
-		if ( lastCmd ) {
-			if ( ctx.m_pLocal->m_MoveType( ) == MOVETYPE_WALK ) {
+		if ( lastCmd )
+		{
+			if ( ctx.m_pLocal->m_MoveType( ) == MOVETYPE_WALK )
+			{
 				cmd.iButtons &= ~( IN_FORWARD | IN_BACK | IN_MOVERIGHT | IN_MOVELEFT );
 
 				if ( cmd.flForwardMove != 0.f )
@@ -404,12 +421,14 @@ void CAntiAim::RunLocalModifications( CUserCmd& cmd, int tickbase ) {
 					( Config::Get<bool>( Vars.MiscSlideWalk ) ? cmd.flForwardMove < 0.f : cmd.flForwardMove > 0.f )
 					? IN_FORWARD : IN_BACK;
 
-				if ( cmd.flSideMove ) {
+				if ( cmd.flSideMove )
+				{
 					cmd.iButtons |=
 						( Config::Get<bool>( Vars.MiscSlideWalk ) ? cmd.flSideMove < 0.f : cmd.flSideMove > 0.f )
 						? IN_MOVERIGHT : IN_MOVELEFT;
 				}
 			}
+
 			Pitch( curUserCmd );
 		}
 
@@ -429,11 +448,11 @@ void CAntiAim::RunLocalModifications( CUserCmd& cmd, int tickbase ) {
 
 	ctx.m_pLocal->m_AnimationLayers( )[ 3 ].flWeight = ctx.m_pAnimationLayers[ 3 ].flWeight;
 	ctx.m_pLocal->m_AnimationLayers( )[ 3 ].flCycle = ctx.m_pAnimationLayers[ 3 ].flCycle;
+
 	std::memcpy( ctx.m_pAnimationLayers, ctx.m_pLocal->m_AnimationLayers( ), 13 * sizeof CAnimationLayer );
 
-	const auto backupCBBTime{ ctx.m_pLocal->m_flNewBoundsTime( ) };
-
-	if ( !Config::Get<bool>( Vars.VisRecordAnims ) || !ctx.m_bSafeFromDefensive ) {
+	if ( !Config::Get<bool>( Vars.VisRecordAnims ) || !ctx.m_bSafeFromDefensive )
+	{
 		ctx.m_pLocal->SetAbsAngles( { 0.f, animstate->flAbsYaw, 0.f } );
 
 		static auto lookupBone{ *reinterpret_cast< int( __thiscall* )( void*, const char* ) >( Displacement::Sigs.LookupBone ) };
@@ -450,9 +469,8 @@ void CAntiAim::RunLocalModifications( CUserCmd& cmd, int tickbase ) {
 		ctx.m_pLocal->m_AnimationLayers( )[ 3 ].flCycle = 0.f;
 		ctx.m_pLocal->m_AnimationLayers( )[ 3 ].flWeight = 0.f;
 
-		ctx.m_pLocal->m_flNewBoundsTime( ) = 0;
-
-		if ( Config::Get<bool>( Vars.ExploitsBreakCBB ) && !ctx.m_iTicksAllowed ) {
+		if ( Config::Get<bool>( Vars.ExploitsBreakCBB ) && !ctx.m_iTicksAllowed )
+		{
 			QAngle angle{ 0, 0, 0 };
 			Interfaces::Prediction->SetLocalViewAngles( angle );
 		}
@@ -460,11 +478,9 @@ void CAntiAim::RunLocalModifications( CUserCmd& cmd, int tickbase ) {
 		Features::AnimSys.SetupBonesRebuilt( ctx.m_pLocal, ctx.m_matRealLocalBones, BONE_USED_BY_SERVER,
 			Interfaces::Globals->flCurTime, true );
 
-		ctx.m_pLocal->m_flNewBoundsTime( ) = backupCBBTime;
+		std::memcpy( ctx.m_pLocal->m_CachedBoneData( ).Base( ), ctx.m_matRealLocalBones, ctx.m_pLocal->m_CachedBoneData().Size() * sizeof( matrix3x4a_t ) );
 
-		std::memcpy( ctx.m_pLocal->m_CachedBoneData( ).Base( ), ctx.m_matRealLocalBones, ctx.m_pLocal->m_iBoneCount( ) * sizeof( matrix3x4a_t ) );
-
-		//ctx.m_pLocal->m_AnimationLayers( )[ 12 ].flWeight = backup12Weight;
+		ctx.m_pLocal->m_AnimationLayers( )[ 12 ].flWeight = backup12Weight;
 		ctx.m_pLocal->m_AnimationLayers( )[ 3 ].flCycle = backup3Cycle;
 		ctx.m_pLocal->m_AnimationLayers( )[ 3 ].flWeight = backup3Weight;
 
@@ -507,14 +523,14 @@ void CAntiAim::RunLocalModifications( CUserCmd& cmd, int tickbase ) {
 		//const auto backupWeight{ ctx.m_pLocal->m_AnimationLayers( )[ 12 ].flWeight };
 		//ctx.m_pLocal->m_AnimationLayers( )[ 12 ].flWeight *= 2.f;
 
-		ctx.m_pLocal->m_flNewBoundsTime( ) = 0;
+		//ctx.m_pLocal->m_flNewBoundsTime( ) = 0;
 
 		//Features::Logger.Log( std::to_string( cmd.viewAngles.y ), false );
 
 		Features::AnimSys.SetupBonesRebuilt( ctx.m_pLocal, ctx.m_cFakeData.m_matMatrix, BONE_USED_BY_SERVER,
 			Interfaces::Globals->flCurTime, true );
 
-		ctx.m_pLocal->m_flNewBoundsTime( ) = backupCBBTime;
+		//ctx.m_pLocal->m_flNewBoundsTime( ) = backupCBBTime;
 		//ctx.m_pLocal->m_AnimationLayers( )[ 12 ].flWeight = backupWeight;
 
 		ctx.m_cFakeData.m_sState = *animstate;
@@ -524,189 +540,3 @@ void CAntiAim::RunLocalModifications( CUserCmd& cmd, int tickbase ) {
 		std::memcpy( ctx.m_pLocal->m_CachedBoneData( ).Base( ), ctx.m_matRealLocalBones, ctx.m_pLocal->m_CachedBoneData( ).Size( ) * sizeof( matrix3x4_t ) );
 	}
 }
-
-// pasta reis courtesy of slazy
-/*
-bool CAntiAim::AutoDirection( float& yaw ) {
-	if ( !Config::Get<int>( Vars.AntiaimFreestand ) )
-		return false;
-
-	CBasePlayer* best_player{ };
-	auto best_fov = std::numeric_limits< float >::max( );
-
-	const auto view_angles = ctx.m_angOriginalViewangles;
-
-	for ( auto i = 1; i < 64; ++i ) {
-		const auto player = static_cast< CBasePlayer* >(
-			Interfaces::ClientEntityList->GetClientEntity( i )
-			);
-		if ( !player
-			|| player->Dormant( )
-			|| player->IsDead( )
-			|| player->IsTeammate( ) )
-			continue;
-
-		const auto fov = Math::GetFov( view_angles, Math::CalcAngle( ctx.m_vecEyePos, player->WorldSpaceCenter( ) ) );
-		if ( fov >= best_fov )
-			continue;
-
-		best_fov = fov;
-		best_player = player;
-	}
-
-	if ( !best_player )
-		return false;
-
-	struct angle_data_t {
-		__forceinline constexpr angle_data_t( ) = default;
-
-		__forceinline angle_data_t( const float yaw ) : m_yaw{ yaw } {}
-
-		int		m_dmg{ };
-		float	m_yaw{ }, m_dist{ };
-		bool	m_can_do_dmg{ };
-	};
-
-	std::array< angle_data_t, 3u > angles{
-		{
-			{ std::remainder( yaw, 360.f ) },
-		{ std::remainder( yaw + 90.f, 360.f ) },
-		{ std::remainder( yaw - 90.f, 360.f ) }
-		}
-	};
-
-	constexpr auto k_range = 30.f;
-
-	auto enemy_shoot_pos = best_player->m_vecOrigin( );
-
-	enemy_shoot_pos.z += 64.f;
-
-	bool valid{ };
-
-	const auto& local_shoot_pos = ctx.m_vecEyePos;
-	for ( auto& angle : angles ) {
-		const auto rad_yaw = DEG2RAD( angle.m_yaw );
-
-		const auto pen_data = Features::Autowall.FireEmulated(
-			best_player, ctx.m_pLocal, enemy_shoot_pos,
-			{
-				local_shoot_pos.x + std::cos( rad_yaw ) * k_range,
-				local_shoot_pos.y + std::sin( rad_yaw ) * k_range,
-				local_shoot_pos.z
-			}
-		);
-
-		if ( pen_data.dmg < 1 )
-			continue;
-
-		angle.m_dmg = pen_data.dmg;
-
-		angle.m_can_do_dmg = angle.m_dmg > 0;
-
-		if ( !angle.m_can_do_dmg )
-			continue;
-
-		valid = true;
-	}
-
-	if ( valid ) {
-		float best_dmg{ };
-		std::size_t best_index{ };
-
-		for ( std::size_t i{ }; i < angles.size( ); ++i ) {
-			const auto& angle = angles.at( i );
-			if ( !angle.m_can_do_dmg
-				|| angle.m_dmg <= best_dmg )
-				continue;
-
-			best_dmg = angle.m_dmg;
-			best_index = i;
-		}
-
-		const auto& best_angle = angles.at( best_index );
-
-		if ( Config::Get<int>( Vars.AntiaimFreestand ) == 2 ) {
-			yaw = best_angle.m_yaw;
-			return true;
-		}
-		else {
-			const auto diff = Math::AngleDiff( yaw, best_angle.m_yaw );
-
-			Invert = diff >= 0.f;
-		}
-
-		return false;
-	}
-
-	valid = false;
-
-	constexpr auto k_step = 4.f;
-
-	for ( auto& angle : angles ) {
-		const auto rad_yaw = DEG2RAD( angle.m_yaw );
-
-		const Vector dst{
-			local_shoot_pos.x + std::cos( rad_yaw ) * k_range,
-			local_shoot_pos.y + std::sin( rad_yaw ) * k_range,
-			local_shoot_pos.z
-		};
-
-		auto dir = dst - enemy_shoot_pos;
-
-		const auto len = dir.NormalizeInPlace( );
-		if ( len <= 0.f )
-			continue;
-
-		for ( float i{ }; i < len; i += k_step ) {
-			const auto contents = Interfaces::EngineTrace->GetPointContents( local_shoot_pos + dir * i, MASK_SHOT_HULL );
-			if ( !( contents & MASK_SHOT_HULL ) )
-				continue;
-
-			auto mult = 1.f;
-
-			if ( i > ( len * 0.5f ) )
-				mult = 1.25f;
-
-			if ( i > ( len * 0.75f ) )
-				mult = 1.25f;
-
-			if ( i > ( len * 0.9f ) )
-				mult = 2.f;
-
-			angle.m_dist += k_step * mult;
-
-			valid = true;
-		}
-	}
-
-	if ( !valid )
-		return false;
-
-	if ( std::abs( angles.at( 0u ).m_dist - angles.at( 1u ).m_dist ) >= 10.f
-		|| std::abs( angles.at( 0u ).m_dist - angles.at( 2u ).m_dist ) >= 10.f ) {
-		std::sort(
-			angles.begin( ), angles.end( ),
-			[ ]( const angle_data_t& a, const angle_data_t& b ) {
-				return a.m_dist > b.m_dist;
-			}
-		);
-
-		const auto& best_angle = angles.front( );
-		if ( best_angle.m_dist > 400.f )
-			return false;
-
-		if ( Config::Get<int>( Vars.AntiaimFreestand ) == 2 ) {
-			yaw = best_angle.m_yaw;
-			return true;
-		}
-		else {
-			const auto diff = Math::AngleDiff( yaw, best_angle.m_yaw );
-
-			Invert = diff >= 0.f;
-		}
-
-		return false;
-	}
-
-	return false;
-}*/

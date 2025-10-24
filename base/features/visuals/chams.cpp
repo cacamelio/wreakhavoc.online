@@ -428,7 +428,7 @@ void CChams::AddHitmatrix( CBasePlayer* player, matrix3x4_t* bones ) {
 	hit.info.hInstance = player->GetModelInstance( );
 	hit.info.iFlags = 1;
 
-	std::memcpy( hit.pBoneToWorld, bones, player->m_iBoneCount( ) * sizeof( matrix3x4_t ) );
+	std::memcpy( hit.pBoneToWorld, bones, player->m_CachedBoneData().Size() * sizeof( matrix3x4_t ) );
 
 	Math::AngleMatrix( hit.info.angAngles, hit.model_to_world );
 
@@ -446,7 +446,7 @@ void CChams::OnSceneEnd( ) {
 	RenderShotChams( );
 
 	std::vector<CBasePlayer*> queue;
-	for ( int i{ 1 }; i < 64; ++i ) {
+	for (auto i = 1; i < 64; ++i) {
 		const auto player{ static_cast< CBasePlayer* >( Interfaces::ClientEntityList->GetClientEntity( i ) ) };
 		if ( !player || !player->IsPlayer( ) )
 			continue;
@@ -498,11 +498,7 @@ void CChams::OnSceneEnd( ) {
 					if ( ( record->m_cAnimData.m_vecOrigin - player->GetAbsOrigin( ) ).Length( ) < 2.f )
 						continue;
 
-					std::memcpy(
-						matrix, record->m_cAnimData.m_arrSides.at( 0 ).m_pMatrix,
-						player->m_iBoneCount( ) * sizeof( matrix3x4_t )
-					);
-
+					std::memcpy(matrix, record->m_cAnimData.m_arrSides.at( 0 ).m_pMatrix, player->m_CachedBoneData().Size() * sizeof( matrix3x4_t ));
 					valid = true;
 				}
 
@@ -522,13 +518,13 @@ void CChams::OnSceneEnd( ) {
 					auto backupBones{ new matrix3x4_t[ 256 ] };
 					std::memcpy(
 						backupBones, player->m_CachedBoneData( ).Base( ),
-						player->m_iBoneCount( ) * sizeof( matrix3x4_t )
+						player->m_CachedBoneData().Size() * sizeof( matrix3x4_t )
 					);
 					// should do cbb... idc tho.
 
 					std::memcpy(
 						player->m_CachedBoneData( ).Base( ), matrix,
-						player->m_iBoneCount( ) * sizeof( matrix3x4_t )
+						player->m_CachedBoneData().Size() * sizeof( matrix3x4_t )
 					);
 
 					const auto backup{ ctx.m_bInCreatemove };
@@ -540,7 +536,7 @@ void CChams::OnSceneEnd( ) {
 
 					std::memcpy(
 						player->m_CachedBoneData( ).Base( ), backupBones,
-						player->m_iBoneCount( ) * sizeof( matrix3x4_t )
+						player->m_CachedBoneData().Size() * sizeof( matrix3x4_t )
 					);
 
 					delete[ ] backupBones;
@@ -576,9 +572,9 @@ void CChams::OnSceneEnd( ) {
 			);
 
 			auto backupBones{ new matrix3x4_t[ 256 ] };
-			std::memcpy( backupBones, player->m_CachedBoneData( ).Base( ), player->m_iBoneCount( ) * sizeof( matrix3x4_t ) );
+			std::memcpy( backupBones, player->m_CachedBoneData( ).Base( ), player->m_CachedBoneData().Size() * sizeof( matrix3x4_t ) );
 
-			std::memcpy( player->m_CachedBoneData( ).Base( ), matrix, player->m_iBoneCount( ) * sizeof( matrix3x4_t ) );
+			std::memcpy( player->m_CachedBoneData( ).Base( ), matrix, player->m_CachedBoneData().Size() * sizeof( matrix3x4_t ) );
 
 			const auto backup{ ctx.m_bInCreatemove };
 			ctx.m_bInCreatemove = true;
@@ -586,7 +582,7 @@ void CChams::OnSceneEnd( ) {
 			ctx.m_bInCreatemove = false;
 			Interfaces::StudioRender->ForcedMaterialOverride( nullptr );
 
-			std::memcpy( player->m_CachedBoneData( ).Base( ), backupBones, player->m_iBoneCount( ) * sizeof( matrix3x4_t ) );
+			std::memcpy( player->m_CachedBoneData( ).Base( ), backupBones, player->m_CachedBoneData().Size() * sizeof( matrix3x4_t ) );
 
 			delete[ ] backupBones;
 			delete[ ] matrix;

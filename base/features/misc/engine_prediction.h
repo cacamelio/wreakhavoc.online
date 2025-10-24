@@ -1,15 +1,22 @@
 #pragma once
 #include "../../context.h"
 
-struct CompressionVars_t {
-	QAngle m_aimPunchAngle{ };
-	Vector m_aimPunchAngleVel{ };
-	float m_vecViewOffsetZ{ };
-
-	int m_iCommandNumber{ };
+struct CompressionVars_t
+{
+	QAngle	m_aimPunchAngle{ };
+	Vector	m_aimPunchAngleVel{ };
+	float	m_vecViewOffsetZ{ };
+	int		m_iCommandNumber{ };
 };
 
-class CEnginePrediction {
+struct ViewmodelData_t
+{
+	float m_flCycle{ };
+	float m_flAnimationTime{ };
+};
+
+class CEnginePrediction
+{
 public:
 	void RunCommand( CUserCmd& cmd );
 	void Finish( );
@@ -17,23 +24,22 @@ public:
 	void RestoreNetvars( int slot );
 	void StoreNetvars( int slot );
 
-	bool ModifyDatamap( );
-
 	float Spread{ };
 	float Inaccuracy{ };
+
+	ViewmodelData_t						m_ViewmodelData{ };
 	std::array< CompressionVars_t, 150> m_cCompressionVars{ };
 private:
-	float m_flCurtime{ };
-	float m_flFrametime{ };
-	//void* m_pOldWeapon{ };
+	float		m_flCurtime{ };
+	float		m_flFrametime{ };
+	int			m_TickCount{ };
 
-	//float VelocityModifier{ };
+	float		m_flVelocityModifier{ };
 
-	//bool FirstTimePrediction{ };
-	//bool InPrediction{ };
+	bool		m_bFirstTimePrediction{ };
+	bool		m_bInPrediction{ };
 
-
-	CMoveData MoveData{ };
+	CMoveData	MoveData{ };
 };
 
 namespace Features { inline CEnginePrediction EnginePrediction; };

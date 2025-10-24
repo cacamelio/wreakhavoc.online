@@ -247,6 +247,5 @@
     <None Include="features\animations\record_utils.inl" />
     <None Include="utils\math.inl" />
     <None Include="utils\threading\impl\thread_pool.inl" />
-    <None Include="testing_shit.havoc" />
   </ItemGroup>
 </Project>

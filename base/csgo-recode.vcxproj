@@ -254,7 +254,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="features\animations\record_utils.inl" />
-    <None Include="testing_shit.havoc" />
     <None Include="utils\math.inl" />
     <None Include="utils\threading\impl\thread_pool.inl" />
   </ItemGroup>
@@ -264,7 +263,7 @@
     <ProjectGuid>{0ae1f3a9-87f5-4f11-9ad3-5846b76b6565}</ProjectGuid>
     <RootNamespace>havoc</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>havoc-sdk</ProjectName>
+    <ProjectName>havoc</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -309,16 +308,16 @@
     <OutDir>$(SolutionDir)build\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)log\$(ProjectName)\$(Configuration)\</IntDir>
     <TargetName>base</TargetName>
-    <ExternalIncludePath>$(SolutionDir)base\dependencies\freetype\include;$(SolutionDir)dependencies\json;$(DXSDK_DIR)Include;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath)</ExternalIncludePath>
-    <LibraryPath>$(SolutionDir)base\dependencies\freetype\win32;$(DXSDK_DIR)Lib\x86;$(LibraryPath);$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
+    <ExternalIncludePath>D:\DirectX-SDK-June2010-master\Include;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(SolutionDir)base\dependencies\freetype\include;$(SolutionDir)dependencies\json;$(DXSDK_DIR)Include;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath)</ExternalIncludePath>
+    <LibraryPath>D:\DirectX-SDK-June2010-master\Lib\x86;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(SolutionDir)base\dependencies\freetype\win32;$(DXSDK_DIR)Lib\x86;$(LibraryPath);$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)build\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)log\$(ProjectName)\$(Configuration)\</IntDir>
     <TargetName>CSGO</TargetName>
-    <ExternalIncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(SolutionDir)base\dependencies\freetype\include;$(SolutionDir)base\dependencies\json;$(DXSDK_DIR)Include;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath)</ExternalIncludePath>
-    <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(SolutionDir)base\dependencies\freetype\win32;$(DXSDK_DIR)Lib\x86;$(LibraryPath);$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
+    <ExternalIncludePath>D:\DirectX-SDK-June2010-master\Include;D:\diretx-sdk\Include;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(SolutionDir)base\dependencies\freetype\include;$(SolutionDir)base\dependencies\json;$(DXSDK_DIR)Include;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath)</ExternalIncludePath>
+    <LibraryPath>D:\DirectX-SDK-June2010-master\Lib\x86;D:\diretx-sdk\Lib\x86;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(SolutionDir)base\dependencies\freetype\win32;$(DXSDK_DIR)Lib\x86;$(LibraryPath);$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Developer|Win32'">
     <LinkIncremental>false</LinkIncremental>

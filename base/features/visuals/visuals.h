@@ -209,7 +209,7 @@ struct TracerData_t {
 
 inline bool PrecacheParticle( const char* szName ) {
 	INetworkStringTable* g_pStringTableParticleEffectNames = Interfaces::NetworkContainer->FindTable( _( "ParticleEffectNames" ) );
-	Interfaces::NetworkContainer->SetAllowClientSideAddString( g_pStringTableParticleEffectNames, true );
+	//Interfaces::NetworkContainer->SetAllowClientSideAddString( g_pStringTableParticleEffectNames, true );
 
 
 	if ( g_pStringTableParticleEffectNames ) {

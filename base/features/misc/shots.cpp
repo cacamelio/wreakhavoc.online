@@ -77,7 +77,7 @@ void CShots::ProcessShots( ) {
 		CGameTrace trace{ };
 
 		shot.m_pRecord->Apply( shot.m_pPlayer );
-		std::memcpy( shot.m_pPlayer->m_CachedBoneData( ).Base( ), shot.m_pMatrix, shot.m_pPlayer->m_iBoneCount( ) * sizeof( matrix3x4_t ) );
+		std::memcpy( shot.m_pPlayer->m_CachedBoneData( ).Base( ), shot.m_pMatrix, shot.m_pPlayer->m_CachedBoneData().Size() * sizeof( matrix3x4_t ) );
 
 		Interfaces::EngineTrace->ClipRayToEntity(
 			{ shot.m_vecStart, shot.m_vecServerEnd },
@@ -103,11 +103,11 @@ void CShots::ProcessShots( ) {
 				if ( trace.iHitGroup == shot.m_iHitgroup
 					&& trace.pHitEntity == shot.m_pPlayer ) {
 
-					std::memcpy( shot.m_pPlayer->m_CachedBoneData( ).Base( ), shot.m_pRecord->m_cAnimData.m_arrSides.at( shot.m_iResolverSide ).m_pMatrix, shot.m_pPlayer->m_iBoneCount( ) * sizeof( matrix3x4_t ) );
+					std::memcpy( shot.m_pPlayer->m_CachedBoneData( ).Base( ), shot.m_pRecord->m_cAnimData.m_arrSides.at( shot.m_iResolverSide ).m_pMatrix, shot.m_pPlayer->m_CachedBoneData().Size() * sizeof( matrix3x4_t ) );
 
 					const auto backupCurtime{ Interfaces::Globals->flCurTime };
 					Interfaces::Globals->flCurTime = shot.m_flCurTime;
-					shot.m_pPlayer->ClampBonesInBBOX( shot.m_pPlayer->m_CachedBoneData( ).Base( ), BONE_USED_BY_SERVER );
+					//shot.m_pPlayer->ClampBonesInBBOX( shot.m_pPlayer->m_CachedBoneData( ).Base( ), BONE_USED_BY_SERVER );
 					Interfaces::Globals->flCurTime = backupCurtime;
 
 					Interfaces::EngineTrace->ClipRayToEntity(
@@ -121,11 +121,11 @@ void CShots::ProcessShots( ) {
 						if ( shot.m_flYaw != shot.m_pPlayer->m_angEyeAngles( ).y )
 							log += " | YAW " + std::to_string( int( shot.m_flYaw ) ) + " - " + std::to_string( int( shot.m_pPlayer->m_angEyeAngles( ).y ) );
 
-						if ( shot.m_cCBBShit.m_flCBBMaxz != shot.m_pPlayer->m_flNewBoundsMaxs( ) )
-							log += " | MAXS " + std::to_string( shot.m_cCBBShit.m_flCBBMaxz ) + " - " + std::to_string( shot.m_pPlayer->m_flNewBoundsMaxs( ) );
+						//if ( shot.m_cCBBShit.m_flCBBMaxz != shot.m_pPlayer->m_flNewBoundsMaxs( ) )
+							//log += " | MAXS " + std::to_string( shot.m_cCBBShit.m_flCBBMaxz ) + " - " + std::to_string( shot.m_pPlayer->m_flNewBoundsMaxs( ) );
 
-						if ( shot.m_cCBBShit.m_flCBBTime != shot.m_pPlayer->m_flNewBoundsTime( ) )
-							log += " | TIME " + std::to_string( shot.m_cCBBShit.m_flCBBTime ) + " - " + std::to_string( shot.m_pPlayer->m_flNewBoundsTime( ) );
+						//if ( shot.m_cCBBShit.m_flCBBTime != shot.m_pPlayer->m_flNewBoundsTime( ) )
+						//	log += " | TIME " + std::to_string( shot.m_cCBBShit.m_flCBBTime ) + " - " + std::to_string( shot.m_pPlayer->m_flNewBoundsTime( ) );
 
 						if ( shot.m_cCBBShit.m_flViewOffsetZ != shot.m_pPlayer->m_vecViewOffset( ).z )
 							log += " | VIEW " + std::to_string( shot.m_cCBBShit.m_flViewOffsetZ ) + " - " + std::to_string( shot.m_pPlayer->m_vecViewOffset( ).z );
@@ -136,10 +136,10 @@ void CShots::ProcessShots( ) {
 						Features::Logger.Log( log, false );
 					}
 					else {
-						std::memcpy( shot.m_pPlayer->m_CachedBoneData( ).Base( ), shot.m_pRecord->m_cAnimData.m_arrSides.at( SWAP_RESIK_SIDE( shot.m_iResolverSide ) ).m_pMatrix, shot.m_pPlayer->m_iBoneCount( ) * sizeof( matrix3x4_t ) );
+						std::memcpy( shot.m_pPlayer->m_CachedBoneData( ).Base( ), shot.m_pRecord->m_cAnimData.m_arrSides.at( SWAP_RESIK_SIDE( shot.m_iResolverSide ) ).m_pMatrix, shot.m_pPlayer->m_CachedBoneData().Size() * sizeof( matrix3x4_t ) );
 
 						Interfaces::Globals->flCurTime = shot.m_flCurTime;
-						shot.m_pPlayer->ClampBonesInBBOX( shot.m_pPlayer->m_CachedBoneData( ).Base( ), BONE_USED_BY_SERVER );
+						//shot.m_pPlayer->ClampBonesInBBOX( shot.m_pPlayer->m_CachedBoneData( ).Base( ), BONE_USED_BY_SERVER );
 						Interfaces::Globals->flCurTime = backupCurtime;
 
 						Interfaces::EngineTrace->ClipRayToEntity(
@@ -160,10 +160,10 @@ void CShots::ProcessShots( ) {
 						else {
 							const auto lastSide{ shot.m_iResolverSide == 0 ? 1 : 0 };
 
-							std::memcpy( shot.m_pPlayer->m_CachedBoneData( ).Base( ), shot.m_pRecord->m_cAnimData.m_arrSides.at( lastSide ).m_pMatrix, shot.m_pPlayer->m_iBoneCount( ) * sizeof( matrix3x4_t ) );
+							std::memcpy( shot.m_pPlayer->m_CachedBoneData( ).Base( ), shot.m_pRecord->m_cAnimData.m_arrSides.at( lastSide ).m_pMatrix, shot.m_pPlayer->m_CachedBoneData().Size() * sizeof( matrix3x4_t ) );
 
 							Interfaces::Globals->flCurTime = shot.m_flCurTime;
-							shot.m_pPlayer->ClampBonesInBBOX( shot.m_pPlayer->m_CachedBoneData( ).Base( ), BONE_USED_BY_SERVER );
+							//shot.m_pPlayer->ClampBonesInBBOX( shot.m_pPlayer->m_CachedBoneData( ).Base( ), BONE_USED_BY_SERVER );
 							Interfaces::Globals->flCurTime = backupCurtime;
 
 							Interfaces::EngineTrace->ClipRayToEntity(
@@ -197,11 +197,11 @@ void CShots::ProcessShots( ) {
 		else {
 			if ( trace.pHitEntity == shot.m_pPlayer ) {
 				// new eye yaw was networked by now
-				std::memcpy( shot.m_pPlayer->m_CachedBoneData( ).Base( ), shot.m_pRecord->m_cAnimData.m_arrSides.at( shot.m_iResolverSide ).m_pMatrix, shot.m_pPlayer->m_iBoneCount( ) * sizeof( matrix3x4_t ) );
+				std::memcpy( shot.m_pPlayer->m_CachedBoneData( ).Base( ), shot.m_pRecord->m_cAnimData.m_arrSides.at( shot.m_iResolverSide ).m_pMatrix, shot.m_pPlayer->m_CachedBoneData().Size() * sizeof( matrix3x4_t ) );
 
 				const auto backupCurtime{ Interfaces::Globals->flCurTime };
 				Interfaces::Globals->flCurTime = shot.m_flCurTime;
-				shot.m_pPlayer->ClampBonesInBBOX( shot.m_pPlayer->m_CachedBoneData( ).Base( ), BONE_USED_BY_SERVER );
+				//shot.m_pPlayer->ClampBonesInBBOX( shot.m_pPlayer->m_CachedBoneData( ).Base( ), BONE_USED_BY_SERVER );
 				Interfaces::Globals->flCurTime = backupCurtime;
 
 				Interfaces::EngineTrace->ClipRayToEntity(
@@ -214,11 +214,11 @@ void CShots::ProcessShots( ) {
 					if ( shot.m_flYaw != shot.m_pPlayer->m_angEyeAngles( ).y )
 						log += " | YAW " + std::to_string( int( shot.m_flYaw ) ) + " - " + std::to_string( int( shot.m_pPlayer->m_angEyeAngles( ).y ) );
 
-					if ( shot.m_cCBBShit.m_flCBBMaxz != shot.m_pPlayer->m_flNewBoundsMaxs( ) )
-						log += " | MAXS " + std::to_string( shot.m_cCBBShit.m_flCBBMaxz ) + " - " + std::to_string( shot.m_pPlayer->m_flNewBoundsMaxs( ) );
+					//if ( shot.m_cCBBShit.m_flCBBMaxz != shot.m_pPlayer->m_flNewBoundsMaxs( ) )
+					//	log += " | MAXS " + std::to_string( shot.m_cCBBShit.m_flCBBMaxz ) + " - " + std::to_string( shot.m_pPlayer->m_flNewBoundsMaxs( ) );
 
-					if ( shot.m_cCBBShit.m_flCBBTime != shot.m_pPlayer->m_flNewBoundsTime( ) )
-						log += " | TIME " + std::to_string( shot.m_cCBBShit.m_flCBBTime ) + " - " + std::to_string( shot.m_pPlayer->m_flNewBoundsTime( ) );
+					//if ( shot.m_cCBBShit.m_flCBBTime != shot.m_pPlayer->m_flNewBoundsTime( ) )
+					//	log += " | TIME " + std::to_string( shot.m_cCBBShit.m_flCBBTime ) + " - " + std::to_string( shot.m_pPlayer->m_flNewBoundsTime( ) );
 
 					if ( shot.m_cCBBShit.m_flViewOffsetZ != shot.m_pPlayer->m_vecViewOffset( ).z )
 						log += " | VIEW " + std::to_string( shot.m_cCBBShit.m_flViewOffsetZ ) + " - " + std::to_string( shot.m_pPlayer->m_vecViewOffset( ).z );
@@ -229,10 +229,10 @@ void CShots::ProcessShots( ) {
 					Features::Logger.Log( log, true );
 				}
 				else {
-					std::memcpy( shot.m_pPlayer->m_CachedBoneData( ).Base( ), shot.m_pRecord->m_cAnimData.m_arrSides.at( SWAP_RESIK_SIDE( shot.m_iResolverSide ) ).m_pMatrix, shot.m_pPlayer->m_iBoneCount( ) * sizeof( matrix3x4_t ) );
+					std::memcpy( shot.m_pPlayer->m_CachedBoneData( ).Base( ), shot.m_pRecord->m_cAnimData.m_arrSides.at( SWAP_RESIK_SIDE( shot.m_iResolverSide ) ).m_pMatrix, shot.m_pPlayer->m_CachedBoneData().Size() * sizeof( matrix3x4_t ) );
 
 					Interfaces::Globals->flCurTime = shot.m_flCurTime;
-					shot.m_pPlayer->ClampBonesInBBOX( shot.m_pPlayer->m_CachedBoneData( ).Base( ), BONE_USED_BY_SERVER );
+					//shot.m_pPlayer->ClampBonesInBBOX( shot.m_pPlayer->m_CachedBoneData( ).Base( ), BONE_USED_BY_SERVER );
 					Interfaces::Globals->flCurTime = backupCurtime;
 
 					Interfaces::EngineTrace->ClipRayToEntity(
@@ -266,10 +266,10 @@ void CShots::ProcessShots( ) {
 									+ "\n" ).c_str( ) );
 						}
 
-						std::memcpy( shot.m_pPlayer->m_CachedBoneData( ).Base( ), shot.m_pRecord->m_cAnimData.m_arrSides.at( lastSide ).m_pMatrix, shot.m_pPlayer->m_iBoneCount( ) * sizeof( matrix3x4_t ) );
+						std::memcpy( shot.m_pPlayer->m_CachedBoneData( ).Base( ), shot.m_pRecord->m_cAnimData.m_arrSides.at( lastSide ).m_pMatrix, shot.m_pPlayer->m_CachedBoneData().Size() * sizeof( matrix3x4_t ) );
 
 						Interfaces::Globals->flCurTime = shot.m_flCurTime;
-						shot.m_pPlayer->ClampBonesInBBOX( shot.m_pPlayer->m_CachedBoneData( ).Base( ), BONE_USED_BY_SERVER );
+						//shot.m_pPlayer->ClampBonesInBBOX( shot.m_pPlayer->m_CachedBoneData( ).Base( ), BONE_USED_BY_SERVER );
 						Interfaces::Globals->flCurTime = backupCurtime;
 
 						Interfaces::EngineTrace->ClipRayToEntity(

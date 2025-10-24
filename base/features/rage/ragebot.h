@@ -37,9 +37,8 @@ struct PreviousExtrapolationData_t {
 
 struct ExtrapolationBackup_t {
 	ExtrapolationBackup_t( CBasePlayer* player )
-		: m_iFlags( player->m_fFlags( ) ), m_iMoveState( player->m_iMoveState( ) ), m_flDuckAmount( player->m_flDuckAmount( ) ), m_flViewOffsetZ( player->m_vecViewOffset( ).z ),
-		m_flNewBoundsTime( player->m_flNewBoundsTime( ) ), m_flNewBoundsMaxs( player->m_flNewBoundsMaxs( ) ), m_vecVelocity( player->m_vecVelocity( ) ),
-		m_vecBaseVelocity( player->m_vecBaseVelocity( ) ), m_vecMins( player->m_vecMins( ) ), m_vecMaxs( player->m_vecMaxs( ) ), m_hGroundEntity( player->m_hGroundEntity( ) ),
+		: m_iFlags( player->m_fFlags( ) ), m_iMoveState( player->m_iMoveState( ) ), m_flDuckAmount( player->m_flDuckAmount( ) ), m_flViewOffsetZ( player->m_vecViewOffset( ).z ), m_vecVelocity( player->m_vecVelocity( ) ),
+		m_vecAbsVelocity( player->m_vecAbsVelocity( ) ), m_vecMins( player->m_vecMins( ) ), m_vecMaxs( player->m_vecMaxs( ) ), m_hGroundEntity( player->m_hGroundEntity( ) ),
 		m_cAnimstate( *player->m_pAnimState( ) ),
 		m_iEFlags( player->m_iEFlags( ) ),
 		m_angEyeAngles( player->m_angEyeAngles( ) ), m_vecOrigin( player->m_vecOrigin( ) ), m_vecAbsOrigin( player->GetAbsOrigin( ) )
@@ -52,7 +51,7 @@ struct ExtrapolationBackup_t {
 		player->m_iMoveState( ) = m_iMoveState;
 		player->m_flDuckAmount( ) = m_flDuckAmount;
 		player->m_vecVelocity( ) = m_vecVelocity;
-		player->m_vecBaseVelocity( ) = m_vecBaseVelocity;
+		player->m_vecAbsVelocity( ) = m_vecAbsVelocity;
 		player->m_angEyeAngles( ) = m_angEyeAngles;
 		player->m_vecOrigin( ) = m_vecOrigin;
 		player->m_iEFlags( ) = m_iEFlags;
@@ -64,8 +63,6 @@ struct ExtrapolationBackup_t {
 		std::memcpy( player->m_AnimationLayers( ), m_pLayers, sizeof( CAnimationLayer ) * 13 );
 
 		player->SetAbsOrigin( m_vecAbsOrigin );
-		player->m_flNewBoundsTime( ) = m_flNewBoundsTime;
-		player->m_flNewBoundsMaxs( ) = m_flNewBoundsMaxs;
 		player->SetCollisionBounds( m_vecMins, m_vecMaxs );
 	}
 
@@ -79,7 +76,7 @@ struct ExtrapolationBackup_t {
 	float m_flViewOffsetZ{ };
 
 	Vector m_vecVelocity{ };
-	Vector m_vecBaseVelocity{ };
+	Vector m_vecAbsVelocity{ };
 	Vector m_vecOrigin{ };
 	Vector m_vecAbsOrigin{ };
 

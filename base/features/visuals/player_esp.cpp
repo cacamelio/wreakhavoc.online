@@ -122,8 +122,8 @@ bool CPlayerESP::DrawAmmo( VisualPlayerEntry& entry ) {
 	if ( !weapon )
 		return false;
 
-	if ( weapon->m_iItemDefinitionIndex( ) == WEAPON_C4 || weapon->m_iItemDefinitionIndex( ) == WEAPON_HEALTHSHOT || weapon->IsGrenade( ) || weapon->IsKnife( ) )
-		return false;
+	//if ( weapon->m_iItemDefinitionIndex( ) == WEAPON_C4 || weapon->m_iItemDefinitionIndex( ) == WEAPON_HEALTHSHOT || weapon->IsGrenade( ) || weapon->IsKnife( ) )
+		//return false;
 
 	const auto weapon_info = weapon->GetCSWeaponData( );
 	if ( !weapon_info )
@@ -135,18 +135,18 @@ bool CPlayerESP::DrawAmmo( VisualPlayerEntry& entry ) {
 	Color last;
 	GetPlayerColorFig( entry.type, VisAmmoCol, last )
 
-	last = last.Set<COLOR_A>( last.Get<COLOR_A>( ) * entry.Alpha );
-	last = last.Lerp( DormantCol.Set<COLOR_A>( last.Get<COLOR_A>( ) * 0.4f ), entry.DormancyFade );
+	//last = last.Set<COLOR_A>( last.Get<COLOR_A>( ) * entry.Alpha );
+	//last = last.Lerp( DormantCol.Set<COLOR_A>( last.Get<COLOR_A>( ) * 0.4f ), entry.DormancyFade );
 
 	const auto outline = Color( 0, 0, 0, static_cast< int >( last.Get<COLOR_A>( ) ) );
 
 	// outline
-	Render::FilledRectangle( entry.BBox.x - 1, entry.BBox.y + entry.BBox.h + 2,  entry.BBox.w + 2, 4, outline.Set<COLOR_A>( outline.Get<COLOR_A>( ) * .5f ) );
+	//Render::FilledRectangle( entry.BBox.x - 1, entry.BBox.y + entry.BBox.h + 2,  entry.BBox.w + 2, 4, outline.Set<COLOR_A>( outline.Get<COLOR_A>( ) * .5f ) );
 	// color
-	if ( ammo )
-		Render::FilledRectangle( entry.BBox.x, entry.BBox.y + entry.BBox.h + 3,  std::min( entry.BBox.w, ammo * entry.BBox.w / max_clip ), 2, last );
+	//if ( ammo )
+	//	Render::FilledRectangle( entry.BBox.x, entry.BBox.y + entry.BBox.h + 3,  std::min( entry.BBox.w, ammo * entry.BBox.w / max_clip ), 2, last );
 
-	Render::Rectangle( entry.BBox.x - 1, entry.BBox.y + entry.BBox.h + 2, entry.BBox.w + 2, 4, outline );
+	//Render::Rectangle( entry.BBox.x - 1, entry.BBox.y + entry.BBox.h + 2, entry.BBox.w + 2, 4, outline );
 
 	return true;
 }

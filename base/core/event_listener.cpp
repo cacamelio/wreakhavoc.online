@@ -21,32 +21,37 @@ void BulletImpact( IGameEvent* pEvent ) {
 		return;
 
 	Vector pos{ pEvent->GetFloat( _( "x" ) ), pEvent->GetFloat( _( "y" ) ), pEvent->GetFloat( _( "z" ) ) };
-	auto ent{ static_cast<CBasePlayer*>( Interfaces::ClientEntityList->GetClientEntity( Interfaces::Engine->GetPlayerForUserID( pEvent->GetInt( _( "userid" ) ) ) ) ) };
 
-	if ( ent != ctx.m_pLocal ) {
-		if ( ent->IsTeammate( ) )
+	if (auto ent{ static_cast<CBasePlayer*>(Interfaces::ClientEntityList->GetClientEntity(Interfaces::Engine->GetPlayerForUserID(pEvent->GetInt(_("userid"))))) }; ent)
+	{
+		if (ent != ctx.m_pLocal)
+		{
+			if (ent->IsTeammate())
+				return;
+
+			const auto& col = Config::Get<Color>(Vars.VisServerBulletImpactsCol);
+			if (Config::Get<bool>(Vars.VisServerBulletImpacts))
+			{
+				Interfaces::DebugOverlay->AddBoxOverlay(pos, Vector(-2.0f, -2.0f, -2.0f), Vector(2.0f, 2.0f, 2.0f), QAngle(0.f, -0.f, 0.f),
+					col.Get<COLOR_R>(), col.Get<COLOR_G>(), col.Get<COLOR_B>(), col.Get<COLOR_A>(), 4.0f);
+			}
+
+			if (Config::Get<bool>(Vars.VisOtherBulletTracers))
+				Features::Visuals.BulletTracers.AddTracer(ent->GetEyePosition(ent->m_angEyeAngles().y, ent->m_angEyeAngles().x), pos, ent);
+
 			return;
-
-		const auto& col = Config::Get<Color>( Vars.VisServerBulletImpactsCol );
-		if ( Config::Get<bool>( Vars.VisServerBulletImpacts ) ) {
-			Interfaces::DebugOverlay->AddBoxOverlay( pos, Vector( -2.0f, -2.0f, -2.0f ), Vector( 2.0f, 2.0f, 2.0f ), QAngle( 0.f, -0.f, 0.f ),
-				col.Get<COLOR_R>( ), col.Get<COLOR_G>( ), col.Get<COLOR_B>( ), col.Get<COLOR_A>( ), 4.0f );
 		}
 
-		if ( Config::Get<bool>( Vars.VisOtherBulletTracers ) )
-			Features::Visuals.BulletTracers.AddTracer( ent->GetEyePosition( ent->m_angEyeAngles( ).y , ent->m_angEyeAngles( ).x ), pos, ent );
-			
-		return;
-	}
+		if (const auto shot = Features::Shots.LastUnprocessed())
+		{
+			shot->m_vecServerEnd = pos;
 
-	if ( const auto shot = Features::Shots.LastUnprocessed( ) ) {
-		shot->m_vecServerEnd = pos;
-
-		if ( Config::Get<bool>( Vars.VisLocalBulletTracers ) )
-			Features::Visuals.BulletTracers.AddTracer( shot->m_vecStart, pos, ent );
+			if (Config::Get<bool>(Vars.VisLocalBulletTracers))
+				Features::Visuals.BulletTracers.AddTracer(shot->m_vecStart, pos, ent);
+		}
+		else if (Config::Get<bool>(Vars.VisLocalBulletTracers))
+			Features::Visuals.BulletTracers.AddTracer(ctx.m_vecEyePos, pos, ent);
 	}
-	else 	if ( Config::Get<bool>( Vars.VisLocalBulletTracers ) )
-		Features::Visuals.BulletTracers.AddTracer( ctx.m_vecEyePos, pos, ent );
 
 	const auto col = Config::Get<Color>( Vars.VisLocalBulletImpactsCol );
 
@@ -55,7 +60,8 @@ void BulletImpact( IGameEvent* pEvent ) {
 			col.Get<COLOR_R>( ), col.Get<COLOR_G>( ), col.Get<COLOR_B>( ), col.Get<COLOR_A>( ), 4.0f );
 }
 
-void RoundStart( IGameEvent* pEvent ) {
+void RoundStart( IGameEvent* pEvent )
+{
 	if ( !pEvent || !ctx.m_pLocal )
 		return;
 
