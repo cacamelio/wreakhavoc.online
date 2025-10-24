@@ -1,3 +1,5 @@
+# edit from @cacamelio : build this in debug
+
 This is my game cheat for the game Counter-Strike:Global Offensive (year 2023).
 
 
